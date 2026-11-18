@@ -1,0 +1,24 @@
+interface Input {
+  /** The owner and repo, such as owner/repo. */
+  repo: string;
+  /** The branch that a change would land on, such as main. */
+  branch: string;
+  /** The channels that announce releases or deploys, or none. */
+  channels: string;
+}
+
+/**
+ * The text that reads Slack for a code freeze in force now. It posts nothing.
+ */
+export default function readFreeze({ repo, branch, channels }: Input) {
+  return `Read the messages of the last 14 days in ${channels}. Take today's
+  date from the clock (date -u), and count 14 days back. Keep the messages
+  that say code freeze or freeze, and that name ${repo}, its team, or its
+  release name. Read the thread of each kept message. Decide whether a
+  freeze covers ${branch} now. A later message that says freeze lifted,
+  unfrozen or freeze over wins over an earlier freeze message. Answer active
+  yes only when a freeze is in force now. Otherwise answer active no. Answer
+  reason: why, in a few words, or none. Answer source: the permalink of the
+  message that sets the freeze state, or none. Answer until: when the freeze
+  ends, as an ISO time, or none when no end is known. Post nothing.`;
+}

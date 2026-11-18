@@ -1,0 +1,25 @@
+interface Input {
+  /** The owner and repo, such as owner/repo. */
+  repo: string;
+  /** The branch that a change would land on, such as main. */
+  branch: string;
+}
+
+/**
+ * The text that reads the repo's own freeze signals. It changes nothing.
+ */
+export default function checkRepo({ repo, branch }: Input) {
+  return `Check whether a code freeze is in force on ${branch} of ${repo}
+  now. Read only, and change nothing. Look at three signals. First, a label
+  named freeze or code freeze on an open issue or pull request of ${repo}
+  (gh issue list and gh pr list with --label). Second, an active ruleset
+  named freeze or code freeze that targets ${branch} (gh api
+  repos/${repo}/rulesets). Third, a FREEZE file at the root of ${repo}, or a
+  freeze note in its README or CONTRIBUTING, read with gh api
+  repos/${repo}/contents/<path>. A note counts only when it says the freeze
+  applies now, and it gives no end time that has passed. Answer active yes
+  only when one of these signals is in force now for ${branch}. Otherwise
+  answer active no. Answer reason: why, in a few words, or none. Answer
+  source: the link to that label, ruleset, file or note, or none. Answer
+  until: when the freeze ends, as an ISO time, or none when no end is known.`;
+}

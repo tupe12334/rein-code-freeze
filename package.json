@@ -1,0 +1,22 @@
+{
+  "name": "code-freeze",
+  "version": "0.1.0",
+  "description": "Answer whether a code freeze covers a repo and branch now, from the repo's own signals and from Slack.",
+  "license": "MIT",
+  "repository": "github:tupe12334/rein-code-freeze",
+  "keywords": [
+    "rein",
+    "github",
+    "slack",
+    "release"
+  ],
+  "files": [
+    "**/*.rein",
+    "scripts/",
+    "README.md",
+    "rein.json"
+  ],
+  "engines": {
+    "rein": "^0.1.0"
+  }
+}

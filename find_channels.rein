@@ -1,0 +1,20 @@
+interface Input {
+  /** The owner and repo, such as owner/repo. */
+  repo: string;
+}
+
+/**
+ * The text that finds the Slack channels that announce releases or deploys.
+ * No channel name is written in this program. It posts nothing.
+ */
+export default function findChannels({ repo }: Input) {
+  return `Find the Slack channels that announce releases or deploys of
+  ${repo}, or of its team or release name. Do not use any channel name from
+  memory. Search the channels (slack_search_channels) whose name or topic
+  matches release, deploy, ship, announce, or the repo name. For each
+  candidate, read its topic and purpose. Keep a channel only when its topic
+  or purpose says it announces releases, deploys or freezes. Drop a channel
+  whose topic or purpose says it is for something else. Answer found yes
+  when at least one channel is kept, otherwise no. Answer channels: each
+  kept channel as name (id), separated by semicolons, or none. Post nothing.`;
+}

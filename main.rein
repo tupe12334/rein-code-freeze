@@ -1,0 +1,54 @@
+interface Input {
+  /** The owner and repo, such as owner/repo. */
+  repo: string;
+  /** The branch that a change would land on, such as main. */
+  branch: string;
+}
+
+interface Signal {
+  /** Is a code freeze in force on this branch now? */
+  active: boolean;
+  /** Why the freeze holds, in a few words, or none. */
+  reason: string;
+  /** The link of the label, ruleset, file, note or message, or none. */
+  source: string;
+  /** When the freeze ends, as an ISO time, or none when not known. */
+  until: string;
+}
+
+interface Channels {
+  /** Is at least one channel found that announces releases or deploys? */
+  found: boolean;
+  /** The channels as name (id), separated by semicolons, or none. */
+  channels: string;
+}
+
+/**
+ * Answer whether a code freeze covers a repo and branch now. The repo's own
+ * signals are read first, then Slack. With no signal, nothing is frozen.
+ * It only reads, and posts nothing.
+ */
+export default async function main({ repo, branch }: Input) {
+  /** Is a freeze in force, by the repo's own signals? */
+  const own: Signal = await request(@./check_repo(repo=repo, branch=branch));
+
+  if (own.active) {
+    return @./report(frozen=true, reason=own.reason, source=own.source,
+      until=own.until);
+  }
+
+  /** The channels that announce releases or deploys, found at run time. */
+  const channels: Channels = await request(@./find_channels(repo=repo));
+
+  if (!channels.found) {
+    return @./report(frozen=false, reason=`no freeze signal`,
+      source=`none`, until=`none`);
+  }
+
+  /** The freeze read from the Slack messages of the last 14 days. */
+  const slack: Signal = await request(@./read_freeze(repo=repo,
+    branch=branch, channels=channels.channels));
+
+  return @./report(frozen=slack.active, reason=slack.reason,
+    source=slack.source, until=slack.until);
+}

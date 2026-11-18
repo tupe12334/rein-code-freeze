@@ -1,0 +1,24 @@
+interface Input {
+  /** Is a code freeze in force on the branch now? */
+  frozen: boolean;
+  /** Why, in a few words, or none. */
+  reason: string;
+  /** The link of the source, or none. */
+  source: string;
+  /** When the freeze ends, as an ISO time, or none. */
+  until: string;
+}
+
+/**
+ * The answer of the program. The caller reads frozen, the reason, the source
+ * and the end time from it.
+ */
+export default function report({ frozen, reason, source, until }: Input) {
+  if (frozen) {
+    return `Return: frozen yes. Reason: ${reason}. Source: ${source}. Until:
+    ${until}.`;
+  }
+
+  return `Return: frozen no. Reason: ${reason}. Source: ${source}. Until:
+  ${until}.`;
+}
