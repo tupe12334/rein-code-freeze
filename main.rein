@@ -1,3 +1,8 @@
+import { checkRepo } from "./check_repo";
+import { report } from "./report";
+import { findChannels } from "./find_channels";
+import { readFreeze } from "./read_freeze";
+
 interface Input {
   /** The owner and repo, such as owner/repo. */
   repo: string;
@@ -30,25 +35,25 @@ interface Channels {
  */
 export default async function main({ repo, branch }: Input) {
   /** Is a freeze in force, by the repo's own signals? */
-  const own: Signal = await request(@./check_repo(repo=repo, branch=branch));
+  const own: Signal = await request(checkRepo(repo=repo, branch=branch));
 
   if (own.active) {
-    return @./report(frozen=true, reason=own.reason, source=own.source,
+    return report(frozen=true, reason=own.reason, source=own.source,
       until=own.until);
   }
 
   /** The channels that announce releases or deploys, found at run time. */
-  const channels: Channels = await request(@./find_channels(repo=repo));
+  const channels: Channels = await request(findChannels(repo=repo));
 
   if (!channels.found) {
-    return @./report(frozen=false, reason=`no freeze signal`,
+    return report(frozen=false, reason=`no freeze signal`,
       source=`none`, until=`none`);
   }
 
   /** The freeze read from the Slack messages of the last 14 days. */
-  const slack: Signal = await request(@./read_freeze(repo=repo,
+  const slack: Signal = await request(readFreeze(repo=repo,
     branch=branch, channels=channels.channels));
 
-  return @./report(frozen=slack.active, reason=slack.reason,
+  return report(frozen=slack.active, reason=slack.reason,
     source=slack.source, until=slack.until);
 }

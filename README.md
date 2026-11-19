@@ -5,7 +5,7 @@ A [Rein](https://github.com/tupe12334/rein) program. It answers whether a code f
 ## Install
 
 ```sh
-rein install -g github:tupe12334/rein-code-freeze#v0.1.0
+rein install -g github:tupe12334/rein-code-freeze#v0.2.0
 ```
 
 ## Use
@@ -14,7 +14,9 @@ A caller awaits the program with the owner and repo, and the branch that a chang
 
 ```text
 /** Is a code freeze in force on this branch now? */
-const freeze: Freeze = await @code-freeze/main(repo=owner/repo, branch=main);
+import { main } from "code-freeze";
+
+const freeze: Freeze = await main(repo=owner/repo, branch=main);
 ```
 
 - `repo`: the owner and repo, such as `owner/repo`.
